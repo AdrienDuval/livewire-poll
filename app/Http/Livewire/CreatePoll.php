@@ -14,24 +14,28 @@ class CreatePoll extends Component
     {
         return view('livewire.create-poll');
     }
-    public function addOption(){
+    public function addOption()
+    {
         $this->options[] = '';
     }
 
-    public function removeOption($index){
+    public function removeOption($index)
+    {
         unset($this->options[$index]);
         $this->options = array_values($this->options);
- 
     }
 
-    public function createPoll() {
-        $poll = Poll::create([
+    public function createPoll()
+    {
+        Poll::create([
             'title' => $this->title
-        ]);
+        ])->options()->createMany(
+            collect($this->options)->map(fn ($option) => ['name' => $option])->all()
+        );
 
-        foreach ($this->options as $optionName) {
-          $poll->options()->create(['name' => $optionName]);
-        }
+        // foreach ($this->options as $optionName) {
+        //     $poll->options()->create(['name' => $optionName]);
+        // }
 
         $this->reset();
     }
